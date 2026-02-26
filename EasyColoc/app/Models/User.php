@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -21,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'reputation',
+        'status',
+        'role',
     ];
 
     /**
@@ -41,8 +46,28 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function colocations()
+    {
+        return $this->hasMany(Colocation::class);
+    }
+
+    public function joins()
+    {
+        return $this->hasMany(Join::class);
+    }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    public function paidExpenses()
+    {
+        return $this->belongsToMany( Expense::class , 'payments')
+            ->withPivot(['amount', 'status', 'paid_at'])->withTimestamps();
     }
 }
