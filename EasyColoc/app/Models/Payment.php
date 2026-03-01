@@ -13,7 +13,7 @@ class Payment extends Model
     protected $fillable = [
         'expense_id',
         'user_id',
-        'amount',
+        'payed',
         'status',
         'paid_at',
     ];

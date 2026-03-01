@@ -13,7 +13,7 @@ class Expenses extends Model
     use HasFactory;
 
     protected $fillable = [
-        'description',
+        'title',
         'amount',
         'status',
         'user_id',
@@ -26,7 +26,12 @@ class Expenses extends Model
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function payer()
+    {
+        return $this->belongsTo(User::class, 'payer_id');
     }
 
     public function category()

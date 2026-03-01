@@ -50,15 +50,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function colocations()
-    {
-        return $this->hasMany(Colocation::class);
-    }
-
-    public function joins()
-    {
-        return $this->hasMany(Join::class);
-    }
 
     public function expenses()
     {
@@ -69,5 +60,16 @@ class User extends Authenticatable
     {
         return $this->belongsToMany( Expense::class , 'payments')
             ->withPivot(['amount', 'status', 'paid_at'])->withTimestamps();
+    }
+
+    public function joinsColocation()
+    {
+        return $this->belongsToMany(Colocation  ::class, 'joins')
+            ->withPivot(['joined_at', 'left_at', 'role'])->withTimestamps();
+    }
+
+    public function Colocations()
+    {
+        return $this->hasMany(Colocation::class);
     }
 }

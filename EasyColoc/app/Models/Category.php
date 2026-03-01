@@ -14,12 +14,12 @@ class Category extends Model
 
     protected $fillable = ['title','colocation_id'];
 
-    public function colocation(): BelongsTo
+    public function colocation()
     {
         return $this->belongsTo(Colocation::class);
     }
 
-    public function expenses(): HasMany
+    public function expenses()
     {
         return $this->hasMany(Expense::class);
     }

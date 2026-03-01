@@ -4,33 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Colocation extends Model
 {
-    /** @use HasFactory<\Database\Factories\ColocationFactory> */
     use HasFactory;
-        protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'reputation',
-        'status', 
-        ];
 
-    protected $hidden = [
-        'password',
-        'remember_token', 
-         ];
+    protected $fillable = [
+        'title',
+        'status',
+        'user_id',
+    ];
 
-    protected function casts(): array
+    /**
+     * Owner (creator) of the colocation
+     */
+    public function users()
     {
-        return [ 'password' => 'hashed',];
-    }
-
-    public function colocations(){
-        return $this->hasMany(Colocation::class );
+        return $this->belongsToMany(User::class, 'joins')
+            ->withPivot(['joined_at', 'left_at', 'role'])->withTimestamps();
     }
 
     public function joins()
@@ -43,9 +37,15 @@ class Colocation extends Model
         return $this->hasMany(Expense::class);
     }
 
-    public function paidExpenses()
+    public function categories()
     {
-        return $this->belongsToMany(Expense::class, 'payments')
-            ->withPivot(['amount' , 'status' , 'paid_at'])->withTimestamps();
+        return $this->hasMany(Category::class);
     }
+
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
+
+    
 }
