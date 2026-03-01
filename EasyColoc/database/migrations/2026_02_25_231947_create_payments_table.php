@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('expense_id')->constrained('expenses')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->integer('amount');
-            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
+            $table->boolean('payed')->default(false);
             $table->date('paid_at')->nullable();
             $table->unique(['expense_id', 'user_id']);
             $table->timestamps();

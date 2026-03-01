@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('joins', function (Blueprint $table) {
             $table->id();
-            $table->date('joined_at')->usecurrent();
+            $table->date('joined_at')->useCurrent();
             $table->date('left_at')->nullable();
             $table->enum('role', ['member', 'owner'])->default('member');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
