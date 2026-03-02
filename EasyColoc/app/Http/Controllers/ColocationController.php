@@ -13,7 +13,9 @@ class ColocationController extends Controller
      */
     public function index()
     {
-        //
+        $colocations = Colocation::all();
+
+        return view('colocation.index', compact('colocations'));
     }
 
     /**
@@ -21,7 +23,7 @@ class ColocationController extends Controller
      */
     public function create()
     {
-        //
+        return view('colocation.create');
     }
 
     /**
@@ -29,7 +31,14 @@ class ColocationController extends Controller
      */
     public function store(StoreColocationRequest $request)
     {
-        //
+        Colocation::create([
+            'title' => $request->title,
+            'status' => $request->status,
+            'user_id' => auth()->id(),
+        ]);
+
+        return redirect()->route('colocations.index')
+            ->with('success', 'Colocation created successfully.');
     }
 
     /**
@@ -37,7 +46,7 @@ class ColocationController extends Controller
      */
     public function show(Colocation $colocation)
     {
-        //
+        return view('colocation.show', compact('colocation'));
     }
 
     /**
@@ -45,7 +54,7 @@ class ColocationController extends Controller
      */
     public function edit(Colocation $colocation)
     {
-        //
+        return view('colocation.edit', compact('colocation'));
     }
 
     /**
@@ -53,7 +62,7 @@ class ColocationController extends Controller
      */
     public function update(UpdateColocationRequest $request, Colocation $colocation)
     {
-        //
+       //
     }
 
     /**
@@ -61,6 +70,6 @@ class ColocationController extends Controller
      */
     public function destroy(Colocation $colocation)
     {
-        //
+       //
     }
 }

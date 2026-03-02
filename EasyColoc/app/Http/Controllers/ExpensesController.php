@@ -13,7 +13,8 @@ class ExpensesController extends Controller
      */
     public function index()
     {
-        //
+        $expenses = Expenses::all();
+        return view('expenses.index', compact('expenses'));
     }
 
     /**
@@ -21,7 +22,7 @@ class ExpensesController extends Controller
      */
     public function create()
     {
-        //
+        return view('expenses.create');
     }
 
     /**
@@ -29,7 +30,12 @@ class ExpensesController extends Controller
      */
     public function store(StoreExpensesRequest $request)
     {
-        //
+        Expenses::create([
+            'amount'  => $request->amount,
+            'description' => $request->description,
+            'colocation_id' =>  $request->colocation_id,
+        ]);
+        return redirect()->route('expenses.index')->with('success', 'Expense created successfully.');
     }
 
     /**
@@ -37,7 +43,7 @@ class ExpensesController extends Controller
      */
     public function show(Expenses $expenses)
     {
-        //
+        return view('expenses.show', compact('expenses'));
     }
 
     /**
@@ -45,7 +51,7 @@ class ExpensesController extends Controller
      */
     public function edit(Expenses $expenses)
     {
-        //
+        return view('expenses.edit', compact('expenses'));
     }
 
     /**
@@ -53,7 +59,12 @@ class ExpensesController extends Controller
      */
     public function update(UpdateExpensesRequest $request, Expenses $expenses)
     {
-        //
+        $expenses->update([
+            'amount'  => $request->amount,
+            'description' => $request->description,
+            'colocation_id' =>  $request->colocation_id,
+        ]);
+        return redirect()->route('expenses.index')->with('success', 'Expense updated successfully.');
     }
 
     /**
@@ -61,6 +72,7 @@ class ExpensesController extends Controller
      */
     public function destroy(Expenses $expenses)
     {
-        //
+        $expenses->delete();
+        return redirect()->route('expenses.index')->with('success', 'Expense deleted successfully.');
     }
 }
