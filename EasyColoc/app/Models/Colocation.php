@@ -4,9 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Colocation extends Model
 {
@@ -15,7 +12,6 @@ class Colocation extends Model
     protected $fillable = [
         'title',
         'status',
-        'user_id',
     ];
 
     /**
@@ -25,11 +21,6 @@ class Colocation extends Model
     {
         return $this->belongsToMany(User::class, 'joins')
             ->withPivot(['joined_at', 'left_at', 'role'])->withTimestamps();
-    }
-
-    public function joins()
-    {
-        return $this->hasMany(Join::class);
     }
 
     public function expenses()
@@ -47,5 +38,10 @@ class Colocation extends Model
         return $this->hasMany(Invitation::class);
     }
 
-    
+    public function payments()
+    {
+        return $this->expenses
+            ->map(fn($expense) => $expense->payments()->with('user')->where('paid_at', null)->get())
+            ->flatten();
+    }
 }

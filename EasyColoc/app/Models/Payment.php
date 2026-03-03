@@ -3,7 +3,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
@@ -13,13 +12,12 @@ class Payment extends Model
     protected $fillable = [
         'expense_id',
         'user_id',
-        'payed',
-        'status',
+        'amount',
         'paid_at',
     ];
 
     protected $casts = [
-        'amount' => 'integer',
+        'amount' => 'float',
         'paid_at' => 'date',
     ];
 

@@ -4,10 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -50,26 +49,25 @@ class User extends Authenticatable
         ];
     }
 
+    public function colocations(): BelongsToMany
+    {
+        return $this->belongsToMany(Colocation::class, 'joins', 'user_id', 'colocation_id')
+            ->withPivot(['joined_at', 'left_at', 'role'])
+            ->withTimestamps();
+    }
 
     public function expenses()
     {
         return $this->hasMany(Expense::class);
     }
 
-    public function paidExpenses()
+    public function payments()
     {
-        return $this->belongsToMany( Expense::class , 'payments')
-            ->withPivot(['amount', 'status', 'paid_at'])->withTimestamps();
+        return $this->hasMany(Payment::class);
     }
 
-    public function joinsColocation()
+    public function activeColocation()
     {
-        return $this->belongsToMany(Colocation  ::class, 'joins')
-            ->withPivot(['joined_at', 'left_at', 'role'])->withTimestamps();
-    }
-
-    public function Colocations()
-    {
-        return $this->hasMany(Colocation::class);
+        return $this->colocations()->where('status', 'actif')->first();
     }
 }
