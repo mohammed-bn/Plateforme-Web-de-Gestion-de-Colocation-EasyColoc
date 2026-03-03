@@ -3,64 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
-use App\Http\Requests\StorePaymentRequest;
-use App\Http\Requests\UpdatePaymentRequest;
+use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function markAsPaid(Payment $payment)
     {
-        //
-    }
+        if ($payment->user_id !== auth()->id()) {
+            return redirect()->back()->with('error', 'Vous ne pouvez marquer que vos propres paiements comme payés.');
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $payment->update([
+            'paid_at' => now(),
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePaymentRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePaymentRequest $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
-    {
-        //
+        return redirect()->back()->with('success', 'Paiement marqué comme payé.');
     }
 }

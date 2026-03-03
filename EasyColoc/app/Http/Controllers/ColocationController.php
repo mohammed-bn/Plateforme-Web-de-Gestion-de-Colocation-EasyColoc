@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Colocation;
 use App\Http\Requests\StoreColocationRequest;
-use App\Http\Requests\UpdateColocationRequest;
+use App\Models\User;
 
 class ColocationController extends Controller
 {
@@ -13,7 +13,7 @@ class ColocationController extends Controller
      */
     public function index()
     {
-        $colocations = Colocation::all();
+        $colocations = auth()->user()->colocations;
 
         return view('colocation.index', compact('colocations'));
     }
@@ -31,10 +31,12 @@ class ColocationController extends Controller
      */
     public function store(StoreColocationRequest $request)
     {
-        Colocation::create([
+        $colocation = Colocation::create([
             'title' => $request->title,
-            'status' => $request->status,
-            'user_id' => auth()->id(),
+        ]);
+
+        $colocation->users()->attach(auth()->id(), [
+            'role' => 'owner',
         ]);
 
         return redirect()->route('colocations.index')
@@ -46,30 +48,48 @@ class ColocationController extends Controller
      */
     public function show(Colocation $colocation)
     {
+        $colocation->load([
+            'users' => function($query) {
+                $query->withPivot(['role', 'joined_at', 'left_at']);
+            },
+            'categories',
+            'expenses.payer',
+            'expenses.category'
+        ]);
+
         return view('colocation.show', compact('colocation'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Mark the authenticated user as having left the colocation.
      */
-    public function edit(Colocation $colocation)
+    public function leave(Colocation $colocation, ?User $user = null)
     {
-        return view('colocation.edit', compact('colocation'));
+        $user = $user ?? auth()->user();
+        $colocation->users()->updateExistingPivot($user->id, [
+            'left_at' => now(),
+        ]);
+
+        return redirect()->route('colocations.index')
+            ->with('success', 'Vous avez quitté la colocation.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateColocationRequest $request, Colocation $colocation)
+    public function inactif(Colocation $colocation)
     {
-       //
-    }
+        $isOwner = $colocation->users()
+            ->where('user_id', auth()->id())
+            ->wherePivot('role', 'owner')
+            ->exists();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Colocation $colocation)
-    {
-       //
+        if (!$isOwner) {
+            return redirect()->back()->with('error', 'Seul le propriétaire peut inactiver la colocation.');
+        }
+
+        $colocation->update([
+            'status' => 'inactif',
+        ]);
+
+        return redirect()->route('colocations.index')
+            ->with('success', 'La colocation est maintenant inactive.');
     }
 }
