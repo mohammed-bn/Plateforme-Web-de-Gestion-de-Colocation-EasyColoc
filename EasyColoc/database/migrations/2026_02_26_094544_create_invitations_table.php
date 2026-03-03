@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('invitations', function (Blueprint $table) {
             $table->id();
-            $table->date('date_expiration');
             $table->enum('status', ['enattente', 'accepter', 'refuse'])->default('enattente');
             $table->string('token')->unique();//i have a problem in this line i don't know how to creat email or now i will creat token and send it to email 
             $table->foreignId('colocation_id')->constrained('colocations')->cascadeOnDelete();

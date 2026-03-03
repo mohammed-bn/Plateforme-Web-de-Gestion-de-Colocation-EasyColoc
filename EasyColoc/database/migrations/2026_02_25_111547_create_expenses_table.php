@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->integer('amount');
-            $table->enum('status', ['paid', 'unpaid'])->default('unpaid');
+            $table->date('date');
             $table->foreignId('payer_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('colocation_id')->constrained('colocations')->cascadeOnDelete();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->timestamps();
         });

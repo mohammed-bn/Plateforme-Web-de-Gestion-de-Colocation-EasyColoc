@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->enum('status', ['actif', 'inactif'])->default('actif');
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
